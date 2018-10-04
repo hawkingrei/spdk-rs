@@ -1,3 +1,5 @@
+#[warn(non_camel_case_types)]
+
 pub mod nvme; 
 pub mod env; 
 pub mod stdinc;

@@ -1,12 +1,8 @@
 [package]
-name = "spdk-rs"
+name = "hello_world"
 version = "0.1.0"
 authors = ["Wangweizhen <hawking.rei@gmail.com>"]
 edition = "2018"
 
-[workspace]
-members = [
-    "example/nvme/hello_world",
-]
-
 [dependencies]
+spdk-rs = { path = "../../../" }
