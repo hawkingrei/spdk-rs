@@ -1,0 +1,3 @@
+bindgen /usr/local/include/spdk/stdinc.h --with-derive-default --whitelist-function "spdk_(env|nvme|dma|mempool).*" --whitelist-type "spdk_(env|nvme|mempool).*" --generate functions,types  -- -I/usr/local/include/ > src/stdinc.rs 
+bindgen /usr/local/include/spdk/env.h --with-derive-default --whitelist-function "spdk_(env|nvme|dma|mempool).*" --whitelist-type "spdk_(env|nvme|mempool).*" --generate functions,types  -- -I/usr/local/include/ > src/env.rs 
+bindgen /usr/local/include/spdk/nvme.h --with-derive-default --whitelist-function "spdk_(env|nvme|dma|mempool).*" --whitelist-type "spdk_(env|nvme|mempool).*" --generate functions,types  -- -I/usr/local/include/ > src/nvme.rs 
