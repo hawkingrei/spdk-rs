@@ -8,5 +8,7 @@ edition = "2018"
 members = [
     "example/nvme/hello_world",
 ]
-
+default-members = [
+    "example/nvme/hello_world",
+]
 [dependencies]
