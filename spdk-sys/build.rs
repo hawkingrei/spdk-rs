@@ -38,6 +38,8 @@ impl<'a> Generator<'a> {
         let mut codegen_config = bindgen::CodegenConfig::empty();
         codegen_config.set(bindgen::CodegenConfig::FUNCTIONS, true);
         codegen_config.set(bindgen::CodegenConfig::TYPES, true);
+        codegen_config.set(bindgen::CodegenConfig::CONSTRUCTORS, true);
+        codegen_config.set(bindgen::CodegenConfig::METHODS, true);
 
         let mut builder = bindgen::builder();
 
