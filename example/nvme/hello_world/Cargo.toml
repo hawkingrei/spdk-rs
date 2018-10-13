@@ -5,4 +5,4 @@ authors = ["Wangweizhen <hawking.rei@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-spdk-rs = { path = "../../../" }
+spdk-sys = { path = "../../../spdk-sys" }
