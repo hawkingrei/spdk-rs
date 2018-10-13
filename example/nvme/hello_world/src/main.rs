@@ -8,12 +8,18 @@ struct ctrlr_entry {
     name: [u8; 1024],
 }
 
+unsafe impl Send for ctrlr_entry {}
+unsafe impl Sync for ctrlr_entry {}
+
 struct ns_entry {
     ctrlr: *mut spdk_nvme_ctrlr,
     ns: *mut spdk_nvme_ns,
     next: *mut ns_entry,
     qpair: *mut spdk_nvme_qpair,
 }
+
+unsafe impl Send for ns_entry {}
+unsafe impl Sync for ns_entry {}
 
 static g_controllers: *mut ctrlr_entry = ptr::null_mut();
 static g_namespaces: *mut ns_entry = ptr::null_mut();
