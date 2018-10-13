@@ -21,8 +21,8 @@ struct ns_entry {
 unsafe impl Send for ns_entry {}
 unsafe impl Sync for ns_entry {}
 
-static g_controllers: *mut ctrlr_entry = ptr::null_mut();
-static g_namespaces: *mut ns_entry = ptr::null_mut();
+static g_controllers: Arc<Option<ctrlr_entry>>;
+static g_namespaces: Arc<Option<ns_entry>>;
 
 fn main() {
     let opt: *mut spdk_env_opts = &mut Default::default();
