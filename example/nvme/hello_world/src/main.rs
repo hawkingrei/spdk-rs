@@ -1,11 +1,11 @@
 extern crate spdk_sys;
 
-use spdk_sys::generated;
+use spdk_sys::*;
 
 fn main() {
-    let opt: *mut generated::spdk_env_opts = &mut Default::default();
+    let opt: *mut spdk_env_opts = &mut Default::default();
     unsafe {
-        generated::spdk_env_opts_init(opt);
+        spdk_env_opts_init(opt);
     }
     println!("Hello, world!");
 }

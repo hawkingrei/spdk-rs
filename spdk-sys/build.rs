@@ -8,7 +8,8 @@ static SPDK_INCLUDE_DIR: &'static str = "/usr/local/include";
 
 fn generate_bindings() {
     let spdk_include_path = env::var("SPDK_INCLUDE").unwrap_or(SPDK_INCLUDE_DIR.to_string());
-    let output_path = env::var("OUT_DIR").unwrap();
+    //let output_path = env::var("OUT_DIR").unwrap();
+    let output_path = "./src/";
     let generator = Generator {
         spdk_include_path: Path::new(&spdk_include_path),
         output_path: Path::new(&output_path),
