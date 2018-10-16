@@ -24,6 +24,15 @@ struct ns_entry {
 unsafe impl Send for ns_entry {}
 unsafe impl Sync for ns_entry {}
 
+fn probe_cb(
+    cb_ctx: *mut libc::c_void,
+    trid: *const spdk_nvme_transport_id,
+    opts: *mut spdk_nvme_ctrlr_opts,
+) -> bool {
+    println!("{:?}", trid.traddr);
+    return true;
+}
+
 fn main() {
     let opt: *mut spdk_env_opts = &mut Default::default();
     unsafe {
