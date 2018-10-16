@@ -33,9 +33,9 @@ fn main() {
          *
          */
         spdk_env_opts_init(opt);
-        opts.name = "hello_world";
-        opts.shm_id = 0;
-        if (spdk_env_init(opts) < 0) {
+        (*opt).name = CString::new("hello_world").expect("CString::new failed");
+        (*opt).shm_id = 0;
+        if (spdk_env_init(opt) < 0) {
             println!("Initializing NVMe Controllers\n");
             process::exit(1);
         }
