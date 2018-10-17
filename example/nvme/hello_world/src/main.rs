@@ -25,6 +25,13 @@ struct ns_entry {
 unsafe impl Send for ns_entry {}
 unsafe impl Sync for ns_entry {}
 
+struct hello_world_sequence {
+    buf: *mut libc::c_void,
+    next: *mut ns_entry,
+    using_cmb_io: u8,
+    is_completed: u8,
+}
+
 unsafe fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
