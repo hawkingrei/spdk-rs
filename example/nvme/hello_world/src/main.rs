@@ -34,7 +34,7 @@ fn probe_cb(
     return true;
 }
 
-pub fn escape(data: &[u8]) -> String {
+pub fn escape(data: &[i8; 257]) -> String {
     let mut escaped = Vec::with_capacity(data.len() * 4);
     for &c in data {
         match c {
