@@ -25,33 +25,33 @@ struct ns_entry {
 unsafe impl Send for ns_entry {}
 unsafe impl Sync for ns_entry {}
 
-fn probe_cb(
+unsafe fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
 ) -> bool {
-    println!("{:?}", escape(&((*trid).traddr)));
+    println!("{:?}", escape((*trid).traddr));
     return true;
 }
 
-pub fn escape(data: &[i8; 257]) -> String {
+pub fn escape(data: [i8; 257]) -> String {
     let mut escaped = Vec::with_capacity(data.len() * 4);
     for c in data.iter() {
-        match c as u8 {
+        match *c as u8 {
             b'\n' => escaped.extend_from_slice(br"\n"),
             b'\r' => escaped.extend_from_slice(br"\r"),
             b'\t' => escaped.extend_from_slice(br"\t"),
             b'"' => escaped.extend_from_slice(b"\\\""),
             b'\\' => escaped.extend_from_slice(br"\\"),
             _ => {
-                if c >= 0x20 && c < 0x7f {
+                if (*c as u8) >= 0x20 && (*c as u8) < 0x7f {
                     // c is printable
-                    escaped.push(c);
+                    escaped.push(*c as u8);
                 } else {
                     escaped.push(b'\\');
-                    escaped.push(b'0' + (c >> 6));
-                    escaped.push(b'0' + ((c >> 3) & 7));
-                    escaped.push(b'0' + (c & 7));
+                    escaped.push(b'0' + (*c as u8 >> 6));
+                    escaped.push(b'0' + ((*c as u8 >> 3) & 7));
+                    escaped.push(b'0' + (*c as u8 & 7));
                 }
             }
         }
