@@ -37,7 +37,7 @@ fn probe_cb(
 pub fn escape(data: &[i8; 257]) -> String {
     let mut escaped = Vec::with_capacity(data.len() * 4);
     for c in data.iter() {
-        match c {
+        match c as u8 {
             b'\n' => escaped.extend_from_slice(br"\n"),
             b'\r' => escaped.extend_from_slice(br"\r"),
             b'\t' => escaped.extend_from_slice(br"\t"),
