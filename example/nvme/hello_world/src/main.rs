@@ -3,6 +3,7 @@ extern crate spdk_sys;
 
 use spdk_sys::*;
 use std::ffi::CString;
+use std::mem;
 use std::process;
 use std::ptr;
 
