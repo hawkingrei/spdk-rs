@@ -1,11 +1,14 @@
 extern crate libc;
 extern crate spdk_sys;
+#[macro_use]
+extern crate lazy_static;
 
 use spdk_sys::*;
 use std::ffi::CString;
 use std::mem;
 use std::process;
 use std::ptr;
+use std::sync::Mutex;
 
 struct ctrlr_entry {
     ctrlr: *mut spdk_nvme_ctrlr,
@@ -21,6 +24,10 @@ struct ns_entry {
     ns: *mut spdk_nvme_ns,
     next: *mut ns_entry,
     qpair: *mut spdk_nvme_qpair,
+}
+
+lazy_static! {
+    static ref g_controllers: Mutex<*mut ctrlr_entry> = Mutex::new(ptr::null_mut());
 }
 
 unsafe impl Send for ns_entry {}
