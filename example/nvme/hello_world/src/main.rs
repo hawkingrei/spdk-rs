@@ -33,6 +33,20 @@ fn probe_cb(
     return true;
 }
 
+fn attach_cb(
+    cb_ctx: *mut libc::c_void,
+    trid: *const spdk_nvme_transport_id,
+    ctrlr: *mut spdk_nvme_ctrlr,
+    opts: *const spdk_nvme_ctrlr_opts,
+) {
+    let mut nsid = 0;
+    let mut num_ns = 0;
+    let entry: *mut ctrlr_entry = ptr::null_mut();
+    let ns: *mut spdk_nvme_ns = ptr::null_mut();
+
+    entry = mem::uninitialized();
+}
+
 fn main() {
     let opt: *mut spdk_env_opts = &mut Default::default();
     unsafe {
