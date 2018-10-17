@@ -1,9 +1,11 @@
+extern crate libc;
 extern crate spdk_sys;
 
 use spdk_sys::*;
 use std::ffi::CString;
 use std::process;
 use std::ptr;
+use libc;
 
 struct ctrlr_entry {
     ctrlr: *mut spdk_nvme_ctrlr,
