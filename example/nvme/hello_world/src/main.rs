@@ -30,7 +30,7 @@ fn probe_cb(
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
 ) -> bool {
-    println!("{:?}", escape((*trid).traddr));
+    println!("{:?}", escape(&((*trid).traddr)));
     return true;
 }
 
