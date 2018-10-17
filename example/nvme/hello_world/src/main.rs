@@ -41,7 +41,7 @@ unsafe fn probe_cb(
     return true;
 }
 
-fn attach_cb(
+unsafe fn attach_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
     ctrlr: *mut spdk_nvme_ctrlr,
@@ -49,8 +49,8 @@ fn attach_cb(
 ) {
     let mut nsid = 0;
     let mut num_ns = 0;
-    let entry: *mut ctrlr_entry = ptr::null_mut();
-    let ns: *mut spdk_nvme_ns = ptr::null_mut();
+    let mut entry: *mut ctrlr_entry = ptr::null_mut();
+    let mut ns: *mut spdk_nvme_ns = ptr::null_mut();
 
     entry = mem::uninitialized();
 }
