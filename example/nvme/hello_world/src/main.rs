@@ -84,10 +84,36 @@ unsafe fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape((*trid).traddr));
-    println!("{:?} {:?} {:?}", (*entry).name, (*cdata).mn, (*cdata).sn);
+    println!("{:?} {:?} {:?}", uescape(((*entry).name), escape((*cdata).mn), (*cdata).sn);
 }
 
-pub fn escape(data: [i8; 257]) -> String {
+pub fn uescape(data: &[u8]) -> String {
+    let mut escaped = Vec::with_capacity(data.len() * 4);
+    for c in data.iter() {
+        match *c as u8 {
+            b'\n' => escaped.extend_from_slice(br"\n"),
+            b'\r' => escaped.extend_from_slice(br"\r"),
+            b'\t' => escaped.extend_from_slice(br"\t"),
+            b'"' => escaped.extend_from_slice(b"\\\""),
+            b'\\' => escaped.extend_from_slice(br"\\"),
+            _ => {
+                if (*c as u8) >= 0x20 && (*c as u8) < 0x7f {
+                    // c is printable
+                    escaped.push(*c as u8);
+                } else {
+                    escaped.push(b'\\');
+                    escaped.push(b'0' + (*c as u8 >> 6));
+                    escaped.push(b'0' + ((*c as u8 >> 3) & 7));
+                    escaped.push(b'0' + (*c as u8 & 7));
+                }
+            }
+        }
+    }
+    escaped.shrink_to_fit();
+    unsafe { String::from_utf8_unchecked(escaped) }
+}
+
+pub fn escape(data: &[i8]) -> String {
     let mut escaped = Vec::with_capacity(data.len() * 4);
     for c in data.iter() {
         match *c as u8 {
