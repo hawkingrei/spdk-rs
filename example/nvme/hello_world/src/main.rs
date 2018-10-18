@@ -64,7 +64,7 @@ unsafe fn probe_cb(
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
 ) -> bool {
-    println!("{:?}", escape((*trid).traddr));
+    println!("{:?}", escape(&(*trid).traddr));
     return true;
 }
 
@@ -83,8 +83,13 @@ unsafe fn attach_cb(
     if entry.is_null() {
         panic!();
     }
-    println!("Attached to {:?}", escape((*trid).traddr));
-    println!("{:?} {:?} {:?}", uescape(((*entry).name), escape((*cdata).mn), (*cdata).sn);
+    println!("Attached to {:?}", escape(&(*trid).traddr));
+    println!(
+        "{:?} {:?} {:?}",
+        uescape(&(*entry).name),
+        escape(&(*cdata).mn),
+        (*cdata).sn
+    );
 }
 
 pub fn uescape(data: &[u8]) -> String {
