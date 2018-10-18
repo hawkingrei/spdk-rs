@@ -30,6 +30,9 @@ struct gctlr {
     ctrlr: *mut ctrlr_entry,
 }
 
+unsafe impl Send for gctlr {}
+unsafe impl Sync for gctlr {}
+
 lazy_static! {
     static ref g_controllers: gctlr = unsafe {
         gctlr {
