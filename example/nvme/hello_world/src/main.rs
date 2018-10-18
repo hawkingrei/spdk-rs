@@ -90,6 +90,10 @@ unsafe fn attach_cb(
         escape(&(*cdata).mn),
         (*cdata).sn
     );
+
+    entry.ctrlr = ctrlr;
+    entry.next = g_controllers.ctrlr;
+    g_controllers.ctrlr = entry;
 }
 
 pub fn uescape(data: &[u8]) -> String {
