@@ -78,12 +78,13 @@ unsafe fn attach_cb(
     let mut num_ns = 0;
     let mut entry: *mut ctrlr_entry = ptr::null_mut();
     let mut ns: *mut spdk_nvme_ns = ptr::null_mut();
-
+    let cdata: spdk_nvme_ctrlr_data = spdk_nvme_ctrlr_get_data(ctrlr);
     entry = mem::uninitialized();
     if entry.is_null() {
         panic!();
     }
     println!("Attached to {:?}", escape((*trid).traddr));
+    println!("{:?} {:?} {:?}",entry->name, cdata->mn, cdata->sn);
 }
 
 pub fn escape(data: [i8; 257]) -> String {
