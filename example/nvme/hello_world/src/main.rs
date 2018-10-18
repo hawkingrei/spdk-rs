@@ -30,12 +30,22 @@ struct gctlr {
     ctrlr: *mut ctrlr_entry,
 }
 
+struct gns {
+    g_namespaces: *mut ns_entry,
+}
+
+unsafe impl Send for gns {}
+unsafe impl Sync for gns {}
+
 unsafe impl Send for gctlr {}
 unsafe impl Sync for gctlr {}
 
 lazy_static! {
     static ref g_controllers: gctlr = gctlr {
         ctrlr: ptr::null_mut(),
+    };
+    static ref g_namespaces: gns = gns {
+        g_namespaces: ptr::null_mut(),
     };
 }
 
