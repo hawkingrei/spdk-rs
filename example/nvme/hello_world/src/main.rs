@@ -91,8 +91,8 @@ unsafe fn attach_cb(
         (*cdata).sn
     );
 
-    entry.ctrlr = ctrlr;
-    entry.next = g_controllers.ctrlr;
+    (*entry).ctrlr = ctrlr;
+    (*entry).next = g_controllers.ctrlr;
     g_controllers.ctrlr = entry;
 }
 
