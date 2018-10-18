@@ -80,6 +80,10 @@ unsafe fn attach_cb(
     let mut ns: *mut spdk_nvme_ns = ptr::null_mut();
 
     entry = mem::uninitialized();
+    if entry.is_null() {
+        panic!();
+    }
+    println!("Attached to {:?}", escape((*trid).traddr));
 }
 
 pub fn escape(data: [i8; 257]) -> String {
