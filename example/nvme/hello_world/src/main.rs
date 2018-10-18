@@ -26,8 +26,16 @@ struct ns_entry {
     qpair: *mut spdk_nvme_qpair,
 }
 
+struct gctlr {
+    ctrlr: *mut ctrlr_entry,
+}
+
 lazy_static! {
-    static ref g_controllers: Mutex<*mut ctrlr_entry> = Mutex::new(ptr::null_mut());
+    static ref g_controllers: gctlr = unsafe {
+        gctlr {
+            ctrlr: ptr::null_mut(),
+        }
+    };
 }
 
 unsafe impl Send for ns_entry {}
