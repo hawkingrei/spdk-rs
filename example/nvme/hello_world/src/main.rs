@@ -84,7 +84,7 @@ unsafe fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape((*trid).traddr));
-    println!("{:?} {:?} {:?}",entry->name, cdata->mn, cdata->sn);
+    println!("{:?} {:?} {:?}", entry.name, cdata.mn, cdata.sn);
 }
 
 pub fn escape(data: [i8; 257]) -> String {
