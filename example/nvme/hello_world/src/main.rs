@@ -34,10 +34,8 @@ unsafe impl Send for gctlr {}
 unsafe impl Sync for gctlr {}
 
 lazy_static! {
-    static ref g_controllers: gctlr = unsafe {
-        gctlr {
-            ctrlr: ptr::null_mut(),
-        }
+    static ref g_controllers: gctlr = gctlr {
+        ctrlr: ptr::null_mut(),
     };
 }
 
