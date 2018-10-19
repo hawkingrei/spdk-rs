@@ -179,10 +179,10 @@ fn main() {
          */
         let rc = spdk_nvme_probe(
             ptr::null(),
-            ptr::null(),
+            ptr::null_mut() as *mut libc::c_void,
             Some(probe_cb),
             Some(attach_cb),
-            ptr::null(),
+            None,
         );
     }
 }
