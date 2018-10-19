@@ -95,7 +95,12 @@ unsafe fn attach_cb(
 
     (*entry).ctrlr = ctrlr;
     (*entry).next = g_controllers.ctrlr;
-    g_controllers.ctrlr = entry;
+    ptr::copy(
+        entry,
+        g_controllers.ctrlr,
+        mem::size_of::<*mut ctrlr_entry>(),
+    );
+    //g_controllers.ctrlr = entry;
 }
 
 pub fn uescape(data: &[u8]) -> String {
