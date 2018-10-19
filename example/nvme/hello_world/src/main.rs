@@ -10,6 +10,7 @@ use std::process;
 use std::ptr;
 use std::sync::Mutex;
 
+#[repr(C)]
 struct ctrlr_entry {
     ctrlr: *mut spdk_nvme_ctrlr,
     next: *mut ctrlr_entry,
@@ -19,6 +20,7 @@ struct ctrlr_entry {
 unsafe impl Send for ctrlr_entry {}
 unsafe impl Sync for ctrlr_entry {}
 
+#[repr(C)]
 struct ns_entry {
     ctrlr: *mut spdk_nvme_ctrlr,
     ns: *mut spdk_nvme_ns,
@@ -93,7 +95,8 @@ unsafe fn attach_cb(
 
     (*entry).ctrlr = ctrlr;
     (*entry).next = g_controllers.ctrlr;
-    g_controllers.ctrlr = entry;
+
+    g_controllers.ctrlr = entry as *mut ctrlr_entry;
 }
 
 pub fn uescape(data: &[u8]) -> String {
