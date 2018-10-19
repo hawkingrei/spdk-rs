@@ -91,7 +91,7 @@ unsafe extern "C" fn attach_cb(
     (*entry).ctrlr = ctrlr;
     (*entry).next = g_controllers.ctrlr;
 
-    //g_controllers.ctrlr = entry as *mut ctrlr_entry;
+    g_controllers.ctrlr = mem::transmute(&*entry);
 }
 
 pub fn uescape(data: &[u8]) -> String {
