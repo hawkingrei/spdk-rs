@@ -86,12 +86,7 @@ unsafe extern "C" fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
-    println!(
-        "{:?} {:?} {:?}",
-        uescape(&(*entry).name),
-        escape(&(*cdata).mn),
-        (*cdata).sn
-    );
+    //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
 
     (*entry).ctrlr = ctrlr;
     (*entry).next = g_controllers.ctrlr;
