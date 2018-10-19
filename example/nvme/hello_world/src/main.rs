@@ -177,6 +177,6 @@ fn main() {
          *  called for each controller after the SPDK NVMe driver has completed
          *  initializing the controller we chose to attach.
          */
-        //let rc = rc = spdk_nvme_probe(ptr::null(), ptr::null(), probe_cb, attach_cb, ptr::null());
+        let rc = rc = spdk_nvme_probe(ptr::null(), ptr::null(), probe_cb, attach_cb, ptr::null());
     }
 }
