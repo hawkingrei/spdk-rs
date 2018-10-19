@@ -1,3 +1,4 @@
+#![feature(maybe_uninit)]
 extern crate libc;
 extern crate spdk_sys;
 #[macro_use]
@@ -81,7 +82,7 @@ unsafe fn attach_cb(
     let mut entry: *mut ctrlr_entry = ptr::null_mut();
     let mut ns: *mut spdk_nvme_ns = ptr::null_mut();
     let cdata: *const spdk_nvme_ctrlr_data = spdk_nvme_ctrlr_get_data(ctrlr);
-    entry = mem::uninitialized();
+    entry = mem::MaybeUninit::uninitialized();
     if entry.is_null() {
         panic!();
     }
@@ -93,10 +94,10 @@ unsafe fn attach_cb(
         (*cdata).sn
     );
 
-    (*entry).ctrlr = ctrlr;
-    (*entry).next = g_controllers.ctrlr;
+    (*entry).ctrlr.write(ctrlr);
+    (*entry).next.write(g_controllers.ctrlr);
 
-    g_controllers.ctrlr = entry as *mut ctrlr_entry;
+    g_controllers.ctrlr = ptr::read(entry);
 }
 
 pub fn uescape(data: &[u8]) -> String {
