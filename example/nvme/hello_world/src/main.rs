@@ -62,7 +62,7 @@ struct hello_world_sequence {
     is_completed: u8,
 }
 
-unsafe fn probe_cb(
+unsafe extern "C" fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
@@ -71,7 +71,7 @@ unsafe fn probe_cb(
     return true;
 }
 
-unsafe fn attach_cb(
+unsafe extern "C" fn attach_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
     ctrlr: *mut spdk_nvme_ctrlr,
@@ -87,12 +87,7 @@ unsafe fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
-    println!(
-        "{:?} {:?} {:?}",
-        uescape(&(*entry).name),
-        escape(&(*cdata).mn),
-        (*cdata).sn
-    );
+    //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
 
     (*entry).ctrlr.write(ctrlr);
     (*entry).next.write(g_controllers.ctrlr);
@@ -178,6 +173,12 @@ fn main() {
          *  called for each controller after the SPDK NVMe driver has completed
          *  initializing the controller we chose to attach.
          */
-        let rc = rc = spdk_nvme_probe(ptr::null(), ptr::null(), probe_cb, attach_cb, ptr::null());
+        let rc = spdk_nvme_probe(
+            ptr::null(),
+            ptr::null_mut() as *mut libc::c_void,
+            Some(probe_cb),
+            Some(attach_cb),
+            None,
+        );
     }
 }
