@@ -177,7 +177,7 @@ fn main() {
          *  called for each controller after the SPDK NVMe driver has completed
          *  initializing the controller we chose to attach.
          */
-        let rc = rc = spdk_nvme_probe(
+        let rc = spdk_nvme_probe(
             ptr::null(),
             ptr::null(),
             Some(probe_cb),
