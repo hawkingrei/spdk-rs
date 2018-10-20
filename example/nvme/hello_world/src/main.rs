@@ -5,6 +5,7 @@ extern crate spdk_sys;
 extern crate lazy_static;
 
 use spdk_sys::*;
+use std::cell::Cell;
 use std::ffi::CString;
 use std::mem;
 use std::process;
@@ -30,11 +31,11 @@ struct ns_entry {
 }
 
 struct gctlr {
-    ctrlr: *mut ctrlr_entry,
+    ctrlr: Cell<*mut ctrlr_entry>,
 }
 
 struct gns {
-    g_namespaces: *mut ns_entry,
+    g_namespaces: Cell<*mut ns_entry>,
 }
 
 unsafe impl Send for gns {}
@@ -45,10 +46,10 @@ unsafe impl Sync for gctlr {}
 
 lazy_static! {
     static ref g_controllers: gctlr = gctlr {
-        ctrlr: ptr::null_mut(),
+        ctrlr: Cell::new(ptr::null_mut()),
     };
     static ref g_namespaces: gns = gns {
-        g_namespaces: ptr::null_mut(),
+        g_namespaces: Cell::new(ptr::null_mut()),
     };
 }
 
@@ -90,9 +91,9 @@ unsafe extern "C" fn attach_cb(
     //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
 
     (*entry).ctrlr.write(*ctrlr);
-    (*entry).next.write(*g_controllers.ctrlr);
+    (*entry).next.write(g_controllers.ctrlr.get());
 
-    g_controllers.ctrlr.write(*entry);
+    g_controllers.ctrlr.set(*entry);
 
     /*
      * Each controller has one or more namespaces.  An NVMe namespace is basically
