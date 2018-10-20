@@ -90,10 +90,10 @@ unsafe extern "C" fn attach_cb(
     println!("Attached to {:?}", escape(&(*trid).traddr));
     //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
 
-    (*entry).ctrlr.write(*ctrlr);
-    (*entry).next.write(g_controllers.ctrlr.get());
+    (*entry).ctrlr = ctrlr;
+    (*entry).next = g_controllers.ctrlr.get();
 
-    g_controllers.ctrlr.set(*entry);
+    g_controllers.ctrlr.set(entry);
 
     /*
      * Each controller has one or more namespaces.  An NVMe namespace is basically
