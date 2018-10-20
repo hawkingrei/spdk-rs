@@ -104,7 +104,10 @@ unsafe extern "C" fn probe_cb(
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
 ) -> bool {
-    println!("{:?}", CString::from_vec_unchecked((*trid).traddr.to_vec()));
+    println!(
+        "{:?}",
+        CString::from_vec_unchecked(tovecu8((*trid).traddr.to_vec()))
+    );
     return true;
 }
 
@@ -131,7 +134,10 @@ unsafe extern "C" fn attach_cb(
     if entry.is_null() {
         panic!();
     }
-    println!("Attached to {:?}", escape(&(*trid).traddr));
+    println!(
+        "Attached to {:?}",
+        CString::from_vec_unchecked(tovecu8((*trid).traddr.to_vec()))
+    );
     let tmp_mn = tovecu8((*cdata).mn.to_vec());
     let tmp_sn = tovecu8((*cdata).sn.to_vec());
     libc::snprintf(
@@ -158,7 +164,7 @@ unsafe extern "C" fn attach_cb(
     num_ns = spdk_nvme_ctrlr_get_num_ns(ctrlr);
     println!(
         "Using controller {:?} with {} namespaces.",
-        uescape(&(*entry).name),
+        CString::from_vec_unchecked((*entry).name.to_vec()),
         num_ns
     );
     for nsid in 1..num_ns + 1 {
@@ -168,58 +174,6 @@ unsafe extern "C" fn attach_cb(
         }
         register_ns(ctrlr, ns);
     }
-}
-
-pub fn uescape(data: &[u8]) -> String {
-    let mut escaped = Vec::with_capacity(data.len() * 4);
-    for c in data.iter() {
-        match *c as u8 {
-            b'\n' => escaped.extend_from_slice(br"\n"),
-            b'\r' => escaped.extend_from_slice(br"\r"),
-            b'\t' => escaped.extend_from_slice(br"\t"),
-            b'"' => escaped.extend_from_slice(b"\\\""),
-            b'\\' => escaped.extend_from_slice(br"\\"),
-            _ => {
-                if (*c as u8) >= 0x20 && (*c as u8) < 0x7f {
-                    // c is printable
-                    escaped.push(*c as u8);
-                } else {
-                    escaped.push(b'\\');
-                    escaped.push(b'0' + (*c as u8 >> 6));
-                    escaped.push(b'0' + ((*c as u8 >> 3) & 7));
-                    escaped.push(b'0' + (*c as u8 & 7));
-                }
-            }
-        }
-    }
-    escaped.shrink_to_fit();
-    unsafe { String::from_utf8_unchecked(escaped) }
-}
-
-pub fn escape(data: &[i8]) -> String {
-    let mut escaped = Vec::with_capacity(data.len() * 4);
-    for c in data.iter() {
-        match *c as u8 {
-            b'\n' => escaped.extend_from_slice(br"\n"),
-            b'\r' => escaped.extend_from_slice(br"\r"),
-            b'\t' => escaped.extend_from_slice(br"\t"),
-            b'"' => escaped.extend_from_slice(b"\\\""),
-            b'\\' => escaped.extend_from_slice(br"\\"),
-            _ => {
-                if (*c as u8) >= 0x20 && (*c as u8) < 0x7f {
-                    // c is printable
-                    escaped.push(*c as u8);
-                } else {
-                    escaped.push(b'\\');
-                    escaped.push(b'0' + (*c as u8 >> 6));
-                    escaped.push(b'0' + ((*c as u8 >> 3) & 7));
-                    escaped.push(b'0' + (*c as u8 & 7));
-                }
-            }
-        }
-    }
-    escaped.shrink_to_fit();
-    unsafe { String::from_utf8_unchecked(escaped) }
 }
 
 unsafe fn hello_world() {
