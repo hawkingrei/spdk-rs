@@ -207,7 +207,7 @@ pub fn escape(data: &[i8]) -> String {
 }
 
 unsafe fn hello_world() {
-    let mut ns_entry: ns_entry = g_namespaces;
+    let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
     let mut sequence: hello_world_sequence;
     let mut rc = 0;
 
