@@ -97,7 +97,11 @@ unsafe extern "C" fn read_complete(arg: *mut libc::c_void, completion: *const sp
     //println!("{}", CString::from_raw((*sequence).buf));
     println!(
         "{}",
-        String::from_utf8_unchecked(Vec::from_raw_parts((*sequence).buf, 0x1000, 0x1000))
+        String::from_utf8_unchecked(Vec::from_raw_parts(
+            (*sequence).buf as *mut u8,
+            0x1000,
+            0x1000
+        ))
     );
     spdk_free((*sequence).buf);
     (*sequence).is_completed = 1;
