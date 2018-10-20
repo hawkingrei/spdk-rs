@@ -211,14 +211,14 @@ unsafe fn cleanup() {
     let mut ctrlr_entry: *mut ctrlr_entry = g_controllers.ctrlr.get();
 
     while (!ns_entry.is_null()) {
-        let mut next: *mut ns_entry = ns_entry.next;
+        let mut next: *mut ns_entry = (*ns_entry).next;
         drop(ns_entry);
         ns_entry = next;
     }
 
     while (!ctrlr_entry.is_null()) {
-        let mut next: *mut ctrlr_entry = ctrlr_entry.next;
-        spdk_nvme_detach(ctrlr_entry.ctrlr);
+        let mut next: *mut ctrlr_entry = (*ctrlr_entry).next;
+        spdk_nvme_detach((*ctrlr_entry).ctrlr);
         drop(ctrlr_entry);
         ctrlr_entry = next;
     }
