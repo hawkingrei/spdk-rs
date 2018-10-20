@@ -82,17 +82,17 @@ unsafe extern "C" fn attach_cb(
     let mut entry: *mut ctrlr_entry = ptr::null_mut();
     let mut ns: *mut spdk_nvme_ns = ptr::null_mut();
     let cdata: *const spdk_nvme_ctrlr_data = spdk_nvme_ctrlr_get_data(ctrlr);
-    entry = mem::MaybeUninit::uninitialized();
+    entry = mem::MaybeUninit::uninitialized().as_mut_ptr();
     if entry.is_null() {
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
     //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
 
-    (*entry).ctrlr.write(ctrlr);
-    (*entry).next.write(g_controllers.ctrlr);
+    (*entry).ctrlr.write(*ctrlr);
+    (*entry).next.write(*g_controllers.ctrlr);
 
-    g_controllers.ctrlr = ptr::read(entry);
+    g_controllers.ctrlr = ptr::read(entry as *mut ctrlr_entry);
 }
 
 pub fn uescape(data: &[u8]) -> String {
