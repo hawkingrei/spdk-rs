@@ -63,6 +63,34 @@ struct hello_world_sequence {
     is_completed: u8,
 }
 
+fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
+    let mut entry: *mut ctrlr_entry = ptr::null_mut();
+    let cdata: *const spdk_nvme_ctrlr_data = spdk_nvme_ctrlr_get_data(ctrlr);
+    entry = mem::MaybeUninit::uninitialized().as_mut_ptr();
+    if entry.is_null() {
+        panic!();
+    }
+
+    if (!spdk_nvme_ns_is_active(ns)) {
+        println!(
+            "Controller: Skipping inactive NS {}",
+            spdk_nvme_ns_get_id(ns)
+        );
+        return;
+    }
+
+    (*entry).ctrlr = ctrlr;
+    (*entry).ns = ns;
+    (*entry).next = g_namespaces.g_namespaces.get();
+    g_namespaces.g_namespaces.set(entry);
+
+    println!(
+        "  Namespace ID: {} size: {}GB\n",
+        spdk_nvme_ns_get_id(ns),
+        spdk_nvme_ns_get_size(ns) / 1000000000,
+    );
+}
+
 unsafe extern "C" fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
