@@ -260,6 +260,12 @@ unsafe fn hello_world() {
         }
         sequence.is_completed = 0;
         sequence.ns_entry = ns_entry;
+        /*
+         * Print "Hello world!" to sequence.buf.  We will write this data to LBA
+         *  0 on the namespace, and then later read it back into a separate buffer
+         *  to demonstrate the full I/O path.
+         */
+        libc::snprintf(sequence.buf, 0x1000, "%s", "Hello world!\n");
     }
 }
 
