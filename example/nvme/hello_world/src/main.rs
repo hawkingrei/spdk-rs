@@ -91,6 +91,13 @@ unsafe fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
     );
 }
 
+unsafe extern "C" fn read_complete(arg1: *mut libc::c_void, arg2: *const spdk_nvme_cpl) {
+    let sequence: *mut hello_world_sequence = arg;
+    //printf("{}", sequence->buf);
+    spdk_free(sequence.buf);
+    sequence.is_completed = 1;
+}
+
 unsafe extern "C" fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
