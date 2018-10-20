@@ -134,7 +134,7 @@ unsafe extern "C" fn attach_cb(
     let tmp_mn = tovecu8((*cdata).mn.to_vec());
     let tmp_sn = tovecu8((*cdata).sn.to_vec());
     libc::snprintf(
-        &(*entry).name as *mut i8,
+        (*entry).name.as_ptr(),
         mem::size_of::<[u8; 1024]>(),
         CString::new("%-20.20s (%-20.20s)").unwrap().as_ptr(),
         CString::from_vec_unchecked(tmp_mn).as_ptr(),
