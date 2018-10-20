@@ -95,7 +95,10 @@ unsafe fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
 unsafe extern "C" fn read_complete(arg: *mut libc::c_void, completion: *const spdk_nvme_cpl) {
     let sequence: *mut hello_world_sequence = arg as *mut hello_world_sequence;
     //println!("{}", CString::from_raw((*sequence).buf));
-    println!("{}",String::from_utf8_lossy( Vec::from_raw_parts(((*sequence).buf,0x1000,0x1000)));
+    println!(
+        "{}",
+        String::from_utf8_lossy(Vec::from_raw_parts((*sequence).buf, 0x1000, 0x1000))
+    );
     spdk_free((*sequence).buf);
     (*sequence).is_completed = 1;
 }
