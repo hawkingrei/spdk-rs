@@ -206,6 +206,41 @@ pub fn escape(data: &[i8]) -> String {
     unsafe { String::from_utf8_unchecked(escaped) }
 }
 
+unsafe fn hello_world() {
+    let mut ns_entry: ns_entry = g_namespaces;
+    let mut sequence: hello_world_sequence;
+    let mut rc = 0;
+
+    while (!ns_entry.is_null()) {
+        /*
+         * Allocate an I/O qpair that we can use to submit read/write requests
+         *  to namespaces on the controller.  NVMe controllers typically support
+         *  many qpairs per controller.  Any I/O qpair allocated for a controller
+         *  can submit I/O to any namespace on that controller.
+         *
+         * The SPDK NVMe driver provides no synchronization for qpair accesses -
+         *  the application must ensure only a single thread submits I/O to a
+         *  qpair, and that same thread must also check for completions on that
+         *  qpair.  This enables extremely efficient I/O processing by making all
+         *  I/O operations completely lockless.
+         */
+
+        ns_entry.qpair = spdk_nvme_ctrlr_alloc_io_qpair(ns_entry.ctrlr, ptr::null(), 0);
+        if (ns_entry.qpair.is_null()) {
+            println!("ERROR: spdk_nvme_ctrlr_alloc_io_qpair() failed");
+            return;
+        }
+
+        /*
+         * Use spdk_dma_zmalloc to allocate a 4KB zeroed buffer.  This memory
+         * will be pinned, which is required for data buffers used for SPDK NVMe
+         * I/O operations.
+         */
+        sequence.using_cmb_io = 1;
+        sequence.buf = spdk_nvme_ctrlr_alloc_cmb_io_buffer(ns_entry.ctrlr, 0x1000);
+    }
+}
+
 unsafe fn cleanup() {
     let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
     let mut ctrlr_entry: *mut ctrlr_entry = g_controllers.ctrlr.get();
