@@ -108,6 +108,13 @@ unsafe extern "C" fn probe_cb(
     return true;
 }
 
+fn tovecu8(veci8: Vec<i8>) -> Vec<u8> {
+    let length = veci8.len() * mem::size_of::<i8>();
+    let ptr = veci8.as_mut_ptr() as *mut u8;
+    mem::forget(veci8);
+    Vec::from_raw_parts(ptr, length, capacity)
+}
+
 unsafe extern "C" fn attach_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
@@ -124,20 +131,8 @@ unsafe extern "C" fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
-    let tmp_mn = move || {
-        let veci8 = (*cdata).mn.to_vec();
-        let length = veci8.len() * mem::size_of::<i8>();
-        let ptr = veci8.as_mut_ptr() as *mut u8;
-        mem::forget(veci8);
-        Vec::from_raw_parts(ptr, length, capacity)
-    };
-    let tmp_sn = move || {
-        let veci8 = (*cdata).sn.to_vec();
-        let length = veci8.len() * mem::size_of::<i8>();
-        let ptr = veci8.as_mut_ptr() as *mut u8;
-        mem::forget(veci8);
-        Vec::from_raw_parts(ptr, length, capacity)
-    };
+    let tmp_mn = tovecu8(*cdata).mn.to_vec())
+    let tmp_sn = tovecu8(*cdata).sn.to_vec())
     libc::snprintf(
         &(*entry).name as *mut i8,
         mem::size_of::<[u8; 1024]>(),
