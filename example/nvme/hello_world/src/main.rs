@@ -109,7 +109,7 @@ unsafe extern "C" fn write_complete(arg: *mut libc::c_void, completion: *const s
      *  the write I/O and allocate a new zeroed buffer for reading
      *  the data back from the NVMe namespace.
      */
-    if ((*sequence).using_cmb_io == 0) {
+    if ((*sequence).using_cmb_io == 1) {
         spdk_nvme_ctrlr_free_cmb_io_buffer((*ns_entry).ctrlr, (*sequence).buf, 0x1000);
     } else {
         spdk_free((*sequence).buf);
