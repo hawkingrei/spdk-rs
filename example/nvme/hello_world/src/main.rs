@@ -142,8 +142,8 @@ unsafe extern "C" fn attach_cb(
         &(*entry).name as *mut i8,
         mem::size_of::<[u8; 1024]>(),
         CString::new("%-20.20s (%-20.20s)").unwrap().as_ptr(),
-        CString::from_vec_unchecked(tmp_mn.to_vec()).as_ptr(),
-        CString::from_vec_unchecked(tmp_sn.to_vec()).as_ptr(),
+        CString::from_vec_unchecked(tmp_mn).as_ptr(),
+        CString::from_vec_unchecked(tmp_sn).as_ptr(),
     );
 
     (*entry).ctrlr = ctrlr;
