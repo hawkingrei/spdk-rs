@@ -124,17 +124,12 @@ unsafe extern "C" fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
-    //println!("{:?} {:?} {:?}", uescape(&(*entry).name), escape(&(*cdata).mn), 0 );
     libc::snprintf(
-        entry.name,
-        mem::size_of(entry.name),
+        (*entry).name,
+        mem::size_of<[u8; 1024]>(),
         CString::new("%-20.20s (%-20.20s)").unwrap().as_ptr(),
-        CString::from_vec_unchecked((*entry).name.to_vec())
-            .unwrap()
-            .as_ptr(),
-        CString::from_vec_unchecked((*cdata).mn.to_vec())
-            .unwrap()
-            .as_ptr(),
+        CString::from_vec_unchecked((*entry).name.to_vec()).as_ptr(),
+        CString::from_vec_unchecked((*cdata).mn.to_vec()).as_ptr(),
     );
 
     (*entry).ctrlr = ctrlr;
