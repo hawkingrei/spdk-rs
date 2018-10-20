@@ -225,8 +225,8 @@ unsafe fn hello_world() {
          *  I/O operations completely lockless.
          */
 
-        ns_entry.qpair = spdk_nvme_ctrlr_alloc_io_qpair(ns_entry.ctrlr, ptr::null(), 0);
-        if (ns_entry.qpair.is_null()) {
+        (*ns_entry).qpair = spdk_nvme_ctrlr_alloc_io_qpair((*ns_entry).ctrlr, ptr::null(), 0);
+        if ((*ns_entry).qpair.is_null()) {
             println!("ERROR: spdk_nvme_ctrlr_alloc_io_qpair() failed");
             return;
         }
@@ -237,7 +237,7 @@ unsafe fn hello_world() {
          * I/O operations.
          */
         sequence.using_cmb_io = 1;
-        sequence.buf = spdk_nvme_ctrlr_alloc_cmb_io_buffer(ns_entry.ctrlr, 0x1000);
+        sequence.buf = spdk_nvme_ctrlr_alloc_cmb_io_buffer((*ns_entry).ctrlr, 0x1000);
     }
 }
 
