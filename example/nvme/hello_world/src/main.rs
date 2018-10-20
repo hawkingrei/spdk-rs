@@ -105,7 +105,7 @@ unsafe extern "C" fn attach_cb(
     num_ns = spdk_nvme_ctrlr_get_num_ns(ctrlr);
     println!(
         "Using controller {:?} with {} namespaces.",
-        (*entry).name,
+        uescape(&(*entry).name),
         num_ns
     );
     for nsid in 1..num_ns + 1 {
