@@ -244,7 +244,7 @@ unsafe fn hello_world() {
             sequence.buf = spdk_zmalloc(
                 0x1000,
                 0x1000,
-                ptr::null(),
+                ptr::null() as *mut u64,
                 SPDK_ENV_SOCKET_ID_ANY,
                 SPDK_MALLOC_DMA,
             );
