@@ -131,8 +131,8 @@ unsafe extern "C" fn attach_cb(
         panic!();
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
-    let tmp_mn = tovecu8(*cdata).mn.to_vec())
-    let tmp_sn = tovecu8(*cdata).sn.to_vec())
+    let tmp_mn = tovecu8((*cdata).mn.to_vec());
+    let tmp_sn = tovecu8((*cdata).sn.to_vec());
     libc::snprintf(
         &(*entry).name as *mut i8,
         mem::size_of::<[u8; 1024]>(),
