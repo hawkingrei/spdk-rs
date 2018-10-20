@@ -104,7 +104,7 @@ unsafe extern "C" fn probe_cb(
     trid: *const spdk_nvme_transport_id,
     opts: *mut spdk_nvme_ctrlr_opts,
 ) -> bool {
-    println!("{:?}", escape(&(*trid).traddr));
+    println!("{:?}", CString::from_vec_unchecked((*trid).traddr.to_vec()));
     return true;
 }
 
