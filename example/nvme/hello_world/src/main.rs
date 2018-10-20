@@ -125,11 +125,18 @@ unsafe extern "C" fn attach_cb(
     }
     println!("Attached to {:?}", escape(&(*trid).traddr));
     libc::snprintf(
-        (*entry).name,
+        &(*entry).name as *mut i8,
         mem::size_of::<[u8; 1024]>(),
         CString::new("%-20.20s (%-20.20s)").unwrap().as_ptr(),
         CString::from_vec_unchecked((*entry).name.to_vec()).as_ptr(),
-        CString::from_vec_unchecked((*cdata).mn.to_vec()).as_ptr(),
+        CString::from_vec_unchecked(|| {
+            let veci8 = (*cdata).mn.to_vec();
+            let length = veci8.len() * mem::size_of::<i8>();
+            let ptr = veci8.as_mut_ptr() as *mut u8;
+            mem::forget(veci8);
+            Vec::from_raw_parts(ptr, length, capacity)
+        })
+        .as_ptr(),
     );
 
     (*entry).ctrlr = ctrlr;
