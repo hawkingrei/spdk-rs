@@ -92,7 +92,7 @@ unsafe extern "C" fn attach_cb(
     (*entry).ctrlr.write(*ctrlr);
     (*entry).next.write(*g_controllers.ctrlr);
 
-    g_controllers.ctrlr = ptr::read(entry as *mut ctrlr_entry);
+    g_controllers.ctrlr.write(entry as *mut ctrlr_entry);
 }
 
 pub fn uescape(data: &[u8]) -> String {
