@@ -8,6 +8,7 @@ use spdk_sys::*;
 use std::cell::Cell;
 use std::ffi::CString;
 use std::mem;
+use std::mem::drop;
 use std::process;
 use std::ptr;
 use std::sync::Mutex;
@@ -203,6 +204,24 @@ pub fn escape(data: &[i8]) -> String {
     }
     escaped.shrink_to_fit();
     unsafe { String::from_utf8_unchecked(escaped) }
+}
+
+unsafe fn cleanup() {
+    let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
+    let mut ctrlr_entry: *mut ctrlr_entry = g_controllers.ctrlr.get();
+
+    while (!ns_entry.is_null()) {
+        let mut next: *mut ns_entry = ns_entry.next;
+        drop(ns_entry);
+        ns_entry = next;
+    }
+
+    while (!ctrlr_entry.is_null()) {
+        let mut next: *mut ctrlr_entry = ctrlr_entry.next;
+        spdk_nvme_detach(ctrlr_entry.ctrlr);
+        drop(ctrlr_entry);
+        ctrlr_entry = next;
+    }
 }
 
 fn main() {
