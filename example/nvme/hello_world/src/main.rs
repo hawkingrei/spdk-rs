@@ -238,6 +238,28 @@ unsafe fn hello_world() {
          */
         sequence.using_cmb_io = 1;
         sequence.buf = spdk_nvme_ctrlr_alloc_cmb_io_buffer((*ns_entry).ctrlr, 0x1000);
+
+        if (sequence.buf.is_null()) {
+            sequence.using_cmb_io = 0;
+            sequence.buf = spdk_zmalloc(
+                0x1000,
+                0x1000,
+                NULL,
+                SPDK_ENV_SOCKET_ID_ANY,
+                SPDK_MALLOC_DMA,
+            );
+        }
+        if (sequence.buf.is_null()) {
+            println!("ERROR: write buffer allocation failed");
+            return;
+        }
+        if (sequence.using_cmb_io) {
+            println!("INFO: using controller memory buffer for IO");
+        } else {
+            println!("INFO: using host memory buffer for IO");
+        }
+        sequence.is_completed = 0;
+        sequence.ns_entry = ns_entry;
     }
 }
 
