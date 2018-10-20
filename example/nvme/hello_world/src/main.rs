@@ -99,6 +99,45 @@ unsafe extern "C" fn read_complete(arg: *mut libc::c_void, completion: *const sp
     (*sequence).is_completed = 1;
 }
 
+unsafe extern "C" fn write_complete(arg: *mut libc::c_void, completion: *const spdk_nvme_cpl) {
+    let sequence: *mut hello_world_sequence = arg as *mut hello_world_sequence;
+    let mut ns_entry: *mut ns_entry = (*sequence).ns_entry;
+    let mut rc = 0;
+
+    /*
+     * The write I/O has completed.  Free the buffer associated with
+     *  the write I/O and allocate a new zeroed buffer for reading
+     *  the data back from the NVMe namespace.
+     */
+    if ((*sequence).using_cmb_io == 0) {
+        spdk_nvme_ctrlr_free_cmb_io_buffer((*ns_entry).ctrlr, (*sequence).buf, 0x1000);
+    } else {
+        spdk_free((*sequence).buf);
+    }
+    (*sequence).buf = spdk_zmalloc(
+        0x1000,
+        0x1000,
+        ptr::null_mut() as *mut u64,
+        SPDK_ENV_SOCKET_ID_ANY,
+        SPDK_MALLOC_DMA,
+    );
+
+    rc = spdk_nvme_ns_cmd_read(
+        (*ns_entry).ns,
+        (*ns_entry).qpair,
+        (*sequence).buf,
+        0, /* LBA start */
+        1, /* number of LBAs */
+        Some(read_complete),
+        sequence as *mut libc::c_void,
+        0,
+    );
+    if (rc != 0) {
+        println!("starting read I/O failed");
+        process::exit(1);
+    }
+}
+
 unsafe extern "C" fn probe_cb(
     cb_ctx: *mut libc::c_void,
     trid: *const spdk_nvme_transport_id,
@@ -180,7 +219,7 @@ unsafe fn hello_world() {
     let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
     let mut sequence: hello_world_sequence;
     let mut rc = 0;
-
+    sequence = mem::uninitialized();
     while (!ns_entry.is_null()) {
         /*
          * Allocate an I/O qpair that we can use to submit read/write requests
@@ -241,6 +280,58 @@ unsafe fn hello_world() {
             CString::new("%s").unwrap().as_ptr(),
             CString::new("Hello world!\n").unwrap().as_ptr(),
         );
+        /*
+         * Write the data buffer to LBA 0 of this namespace.  "write_complete" and
+         *  "&sequence" are specified as the completion callback function and
+         *  argument respectively.  write_complete() will be called with the
+         *  value of &sequence as a parameter when the write I/O is completed.
+         *  This allows users to potentially specify different completion
+         *  callback routines for each I/O, as well as pass a unique handle
+         *  as an argument so the application knows which I/O has completed.
+         *
+         * Note that the SPDK NVMe driver will only check for completions
+         *  when the application calls spdk_nvme_qpair_process_completions().
+         *  It is the responsibility of the application to trigger the polling
+         *  process.
+         */
+        rc = spdk_nvme_ns_cmd_read(
+            (*ns_entry).ns,
+            (*ns_entry).qpair,
+            sequence.buf,
+            0, /* LBA start */
+            1, /* number of LBAs */
+            Some(write_complete),
+            &sequence as *const _ as *mut libc::c_void,
+            0,
+        );
+        if (rc != 0) {
+            println!("starting write I/O failed");
+            process::exit(1);
+        }
+        /*
+         * Poll for completions.  0 here means process all available completions.
+         *  In certain usage models, the caller may specify a positive integer
+         *  instead of 0 to signify the maximum number of completions it should
+         *  process.  This function will never block - if there are no
+         *  completions pending on the specified qpair, it will return immediately.
+         *
+         * When the write I/O completes, write_complete() will submit a new I/O
+         *  to read LBA 0 into a separate buffer, specifying read_complete() as its
+         *  completion routine.  When the read I/O completes, read_complete() will
+         *  print the buffer contents and set sequence.is_completed = 1.  That will
+         *  break this loop and then exit the program.
+         */
+        while (sequence.is_completed == 0) {
+            spdk_nvme_qpair_process_completions((*ns_entry).qpair, 0);
+        }
+        /*
+         * Free the I/O qpair.  This typically is done when an application exits.
+         *  But SPDK does support freeing and then reallocating qpairs during
+         *  operation.  It is the responsibility of the caller to ensure all
+         *  pending I/O are completed before trying to free the qpair.
+         */
+        spdk_nvme_ctrlr_free_io_qpair((*ns_entry).qpair);
+        ns_entry = (*ns_entry).next;
     }
 }
 
@@ -295,5 +386,22 @@ fn main() {
             Some(attach_cb),
             None,
         );
+
+        if (rc != 0) {
+            println!("spdk_nvme_probe() failed");
+            cleanup();
+            return;
+        }
+
+        if (g_controllers.ctrlr.get().is_null()) {
+            println!("no NVMe controllers found");
+            cleanup();
+            return;
+        }
+
+        println!("Initialization complete.");
+        hello_world();
+        cleanup();
+        return;
     }
 }
