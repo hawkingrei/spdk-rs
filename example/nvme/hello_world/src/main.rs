@@ -110,6 +110,7 @@ unsafe extern "C" fn probe_cb(
 
 fn tovecu8(veci8: Vec<i8>) -> Vec<u8> {
     let length = veci8.len() * mem::size_of::<i8>();
+    let capacity = vec32.capacity() * mem::size_of::<i8>();
     let ptr = veci8.as_mut_ptr() as *mut u8;
     mem::forget(veci8);
     Vec::from_raw_parts(ptr, length, capacity)
