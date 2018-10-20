@@ -64,7 +64,7 @@ struct hello_world_sequence {
 }
 
 fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
-    let mut entry: *mut ctrlr_entry = ptr::null_mut();
+    let mut entry: *mut ns_entry = ptr::null_mut();
     let cdata: *const spdk_nvme_ctrlr_data = spdk_nvme_ctrlr_get_data(ctrlr);
     entry = mem::MaybeUninit::uninitialized().as_mut_ptr();
     if entry.is_null() {
