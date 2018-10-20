@@ -59,7 +59,7 @@ unsafe impl Sync for ns_entry {}
 
 struct hello_world_sequence {
     buf: *mut libc::c_void,
-    next: *mut ns_entry,
+    ns_entry: *mut ns_entry,
     using_cmb_io: u8,
     is_completed: u8,
 }
@@ -253,7 +253,7 @@ unsafe fn hello_world() {
             println!("ERROR: write buffer allocation failed");
             return;
         }
-        if (sequence.using_cmb_io) {
+        if (sequence.using_cmb_io == 0) {
             println!("INFO: using controller memory buffer for IO");
         } else {
             println!("INFO: using host memory buffer for IO");
