@@ -93,6 +93,26 @@ unsafe extern "C" fn attach_cb(
     (*entry).next.write(*g_controllers.ctrlr);
 
     g_controllers.ctrlr.write(*entry);
+
+    /*
+     * Each controller has one or more namespaces.  An NVMe namespace is basically
+     *  equivalent to a SCSI LUN.  The controller's IDENTIFY data tells us how
+     *  many namespaces exist on the controller.  For Intel(R) P3X00 controllers,
+     *  it will just be one namespace.
+     *
+     * Note that in NVMe, namespace IDs start at 1, not 0.
+     */
+    num_ns = spdk_nvme_ctrlr_get_num_ns(ctrlr);
+    println!(
+        "Using controller {:?} with {} namespaces.",
+        entry.name, num_ns
+    );
+    for (nsid = 1; nsid <= num_ns; nsid++) {
+		ns = spdk_nvme_ctrlr_get_ns(ctrlr, nsid);
+		if (ns.is_null()) {
+			continue;
+		}
+    }
 }
 
 pub fn uescape(data: &[u8]) -> String {
