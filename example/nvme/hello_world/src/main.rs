@@ -265,7 +265,12 @@ unsafe fn hello_world() {
          *  0 on the namespace, and then later read it back into a separate buffer
          *  to demonstrate the full I/O path.
          */
-        libc::snprintf(sequence.buf, 0x1000, "%s", "Hello world!\n");
+        libc::snprintf(
+            sequence.buf,
+            0x1000,
+            CString::new("%s").unwrap().as_ptr(),
+            CString::new("Hello world!\n").unwrap().as_ptr(),
+        );
     }
 }
 
