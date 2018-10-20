@@ -108,7 +108,7 @@ unsafe extern "C" fn probe_cb(
     return true;
 }
 
-fn tovecu8(veci8: Vec<i8>) -> Vec<u8> {
+unsafe fn tovecu8(mut veci8: Vec<i8>) -> Vec<u8> {
     let length = veci8.len() * mem::size_of::<i8>();
     let capacity = veci8.capacity() * mem::size_of::<i8>();
     let ptr = veci8.as_mut_ptr() as *mut u8;
