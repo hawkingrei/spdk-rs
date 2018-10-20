@@ -126,7 +126,7 @@ unsafe extern "C" fn attach_cb(
     println!("Attached to {:?}", escape(&(*trid).traddr));
     libc::snprintf(
         (*entry).name,
-        mem::size_of<[u8; 1024]>(),
+        mem::size_of::<[u8; 1024]>(),
         CString::new("%-20.20s (%-20.20s)").unwrap().as_ptr(),
         CString::from_vec_unchecked((*entry).name.to_vec()).as_ptr(),
         CString::from_vec_unchecked((*cdata).mn.to_vec()).as_ptr(),
