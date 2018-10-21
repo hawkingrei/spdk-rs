@@ -354,10 +354,10 @@ unsafe fn cleanup() {
         ns_entry = next;
     }
 
-    while (!ctrlr_entr.is_null()) {
-        let mut next: *mut ctrlr_entry = (*ctrlr_entr).next;
+    while (!ctrlr_entry.is_null()) {
+        let mut next: *mut ctrlr_entry = (*ctrlr_entry).next;
 
-        spdk_nvme_detach((*ctrlr_entr).ctrlr);
+        spdk_nvme_detach((*ctrlr_entry).ctrlr);
         drop(ctrlr_entry);
         ctrlr_entry = next;
     }
