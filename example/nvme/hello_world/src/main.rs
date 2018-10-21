@@ -196,7 +196,6 @@ unsafe extern "C" fn attach_cb(
     );
 
     (*entry).ctrlr = ctrlr;
-    //(*entry).next = ptr::null_mut() as *mut ctrlr_entry;
     (*entry).next = g_controllers.ctrlr.get();
     println!("{:?}", (*entry).ctrlr);
     g_controllers.ctrlr.set(entry);
