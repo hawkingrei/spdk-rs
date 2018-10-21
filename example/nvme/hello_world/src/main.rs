@@ -82,7 +82,8 @@ unsafe fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
 
     (*entry).ctrlr = ctrlr;
     (*entry).ns = ns;
-    (*entry).next = g_namespaces.g_namespaces.get();
+    //(*entry).next = g_namespaces.g_namespaces.get();
+    (*entry).next = ptr::null();
     g_namespaces.g_namespaces.set(entry);
 
     println!(
@@ -345,7 +346,7 @@ unsafe fn hello_world() {
 
 unsafe fn cleanup() {
     let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
-    let mut ctrlr_entry: *mut ctrlr_entry = g_controllers.ctrlr.get();
+    let mut ctrlr_entr: *mut ctrlr_entry = g_controllers.ctrlr.get();
 
     while (!ns_entry.is_null()) {
         let mut next: *mut ns_entry = (*ns_entry).next;
@@ -353,9 +354,10 @@ unsafe fn cleanup() {
         ns_entry = next;
     }
 
-    while (!ctrlr_entry.is_null()) {
-        let mut next: *mut ctrlr_entry = (*ctrlr_entry).next;
-        spdk_nvme_detach((*ctrlr_entry).ctrlr);
+    while (!ctrlr_entr.is_null()) {
+        let mut next: *mut ctrlr_entry = (*ctrlr_entr).next;
+
+        spdk_nvme_detach((*ctrlr_entr).ctrlr);
         drop(ctrlr_entry);
         ctrlr_entry = next;
     }
