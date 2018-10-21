@@ -95,7 +95,6 @@ unsafe fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
 
 unsafe extern "C" fn read_complete(arg: *mut libc::c_void, completion: *const spdk_nvme_cpl) {
     let sequence: *mut hello_world_sequence = arg as *mut hello_world_sequence;
-    //println!("{}", CString::from_raw((*sequence).buf));
     println!(
         "{}",
         String::from_utf8_unchecked(Vec::from_raw_parts(
@@ -198,7 +197,7 @@ unsafe extern "C" fn attach_cb(
 
     (*entry).ctrlr = ctrlr;
     (*entry).next = ptr::null_mut() as *mut ctrlr_entry;
-
+    println!((*entry).ctrlr)
     g_controllers.ctrlr.set(entry);
 
     /*
@@ -356,7 +355,7 @@ unsafe fn cleanup() {
 
     while (!ctrlr_entry.is_null()) {
         let mut next: *mut ctrlr_entry = (*ctrlr_entry).next;
-
+        println!((*ctrlr_entry).ctrlr)
         spdk_nvme_detach((*ctrlr_entry).ctrlr);
         drop(ctrlr_entry);
         ctrlr_entry = next;
