@@ -83,7 +83,7 @@ unsafe fn register_ns(ctrlr: *mut spdk_nvme_ctrlr, ns: *mut spdk_nvme_ns) {
     (*entry).ctrlr = ctrlr;
     (*entry).ns = ns;
     //(*entry).next = g_namespaces.g_namespaces.get();
-    (*entry).next = ptr::null() as *mut ns_entry;
+    (*entry).next = ptr::null_mut() as *mut ns_entry;
     g_namespaces.g_namespaces.set(entry);
 
     println!(
