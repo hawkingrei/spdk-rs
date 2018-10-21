@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 spdk-sys = { path = "../../../spdk-sys" }
+libc = "0.2.43"
+lazy_static = "1.1.0"
