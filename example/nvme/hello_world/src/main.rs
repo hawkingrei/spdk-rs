@@ -355,7 +355,6 @@ unsafe fn cleanup() {
 
     while (!ctrlr_entry.is_null()) {
         let mut next: *mut ctrlr_entry = (*ctrlr_entry).next;
-        println!("{:?}", (*ctrlr_entry).ctrlr);
         spdk_nvme_detach((*ctrlr_entry).ctrlr);
         drop(ctrlr_entry);
         ctrlr_entry = next;
