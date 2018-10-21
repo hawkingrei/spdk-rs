@@ -197,8 +197,7 @@ unsafe extern "C" fn attach_cb(
 
     (*entry).ctrlr = ctrlr;
     (*entry).next = g_controllers.ctrlr.get();
-    mem::forget((*entry).ctrlr);
-    //println!("{:?}", (*entry).ctrlr);
+    println!("{:?}", (*entry).ctrlr);
     g_controllers.ctrlr.set(entry);
 
     /*
