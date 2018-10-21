@@ -197,7 +197,7 @@ unsafe extern "C" fn attach_cb(
     );
 
     (*entry).ctrlr = ctrlr;
-    (*entry).next = ptr::null() as *mut ns_entry;
+    (*entry).next = ptr::null() as *mut ctrlr_entry;
 
     g_controllers.ctrlr.set(entry);
 
@@ -346,7 +346,7 @@ unsafe fn hello_world() {
 
 unsafe fn cleanup() {
     let mut ns_entry: *mut ns_entry = g_namespaces.g_namespaces.get();
-    let mut ctrlr_entry: *mut ctrlr_entry = g_controllers.ctrlr.as_ptr();
+    let mut ctrlr_entry: *mut ctrlr_entry = *(g_controllers.ctrlr.as_ptr());
 
     while (!ns_entry.is_null()) {
         let mut next: *mut ns_entry = (*ns_entry).next;
