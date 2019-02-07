@@ -12,6 +12,7 @@ edition = '2018'
 failure = "= 0.1.2"
 futures-preview = "= 0.3.0-alpha.12"
 libc = "= 0.2.48"
+lazy_static = "1.2.0"
 
 [dev-dependencies]
 spectral = "= 0.6.0"
@@ -20,10 +21,8 @@ slog-term = "=2.0.2"
 [workspace]
 members = [
   "spdk-sys",
-  "example/nvme/hello_world",
 
 ]
 default-members = [
   "spdk-sys",
-  "example/nvme/hello_world",
 ]

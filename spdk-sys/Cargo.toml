@@ -16,9 +16,10 @@ failure = ""
 failure_derive = ""
 futures-preview = "= 0.3.0-alpha.12"
 libc = ""
+lazy_static = "1.2.0"
 
 [build-dependencies]
-bindgen = "= 0.47.1"
+bindgen = "= 0.42.2"
 
 [dev-dependencies]
 hamcrest2 = "*"
