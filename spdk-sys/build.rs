@@ -11,11 +11,6 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rustc-link-lib=spdk");
     println!("cargo:rustc-link-search=native=/usr/local/lib");
-    println!("cargo:rustc-link-search=native=/usr/local/include");
-    println!("cargo:rustc-link-search=native=/usr/local/include/dpdk");
-    println!("cargo:rustc-link-search=native=/usr/local/include/spdk");
-    println!("cargo:rustc-link-search=native=/usr/include/");
-    println!("cargo:rustc-link-search=native=/usr/local/lib");
 
     let mut codegen_config = bindgen::CodegenConfig::empty();
         codegen_config.set(bindgen::CodegenConfig::FUNCTIONS, true);
@@ -37,8 +32,6 @@ fn main() {
         .rustfmt_configuration_file(Some(PathBuf::from("../rustfmt.toml")))
         .layout_tests(false)
         .ctypes_prefix("libc")
-
-        .clang_arg(spdk_include_path)
         // The input header we would like to generate
         // bindings for.
         .derive_default(true)
