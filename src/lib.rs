@@ -1,3 +1,5 @@
+extern crate spdk-sys as spdk;
+
 pub mod bdev;
 pub mod bdev_module;
 pub mod context;
