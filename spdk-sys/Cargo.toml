@@ -19,7 +19,7 @@ libc = ""
 lazy_static = "1.2.0"
 
 [build-dependencies]
-bindgen = "= 0.42.2"
+bindgen = "= 0.47.1"
 
 [dev-dependencies]
 hamcrest2 = "*"
